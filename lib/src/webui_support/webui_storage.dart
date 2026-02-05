@@ -686,9 +686,10 @@ class WebUIStorage {
       
       // Extract files to temp directory
       for (final file in archive) {
-        final filename = file.name;
+        // Sanitize path components for Windows (colons are illegal in filenames)
+        final filename = file.name.split('/').map(_sanitizeFilename).join('/');
         final filePath = '${tempDir.path}/$filename';
-        
+
         if (file.isFile) {
           final outFile = File(filePath);
           outFile.createSync(recursive: true);
@@ -751,6 +752,15 @@ class WebUIStorage {
     _log.info('Installed WebUI skin: $skinId at ${destDir.path}');
     
     return skinId;
+  }
+
+  /// Sanitize a single filename component for the current platform.
+  /// On Windows, replaces characters illegal in filenames (: < > | " ? *).
+  String _sanitizeFilename(String name) {
+    if (Platform.isWindows) {
+      return name.replaceAll(RegExp(r'[:<>|"?*]'), '-');
+    }
+    return name;
   }
 
   /// Recursively copy a directory

@@ -33,6 +33,10 @@ class SettingsController with ChangeNotifier {
 
   late ScalePowerMode _scalePowerMode;
 
+  late String _bridgeHost;
+  late int _bridgeHttpPort;
+  late int _bridgeWsPort;
+
   // Allow Widgets to read the user's preferred ThemeMode.
   ThemeMode get themeMode => _themeMode;
   GatewayMode get gatewayMode => _gatewayMode;
@@ -41,6 +45,9 @@ class SettingsController with ChangeNotifier {
   double get weightFlowMultiplier => _weightFlowMultiplier;
   double get volumeFlowMultiplier => _volumeFlowMultiplier;
   ScalePowerMode get scalePowerMode => _scalePowerMode;
+  String get bridgeHost => _bridgeHost;
+  int get bridgeHttpPort => _bridgeHttpPort;
+  int get bridgeWsPort => _bridgeWsPort;
 
   /// Load the user's settings from the SettingsService. It may load from a
   /// local database or the internet. The controller only knows it can load the
@@ -53,6 +60,9 @@ class SettingsController with ChangeNotifier {
     _weightFlowMultiplier = await _settingsService.weightFlowMultiplier();
     _volumeFlowMultiplier = await _settingsService.volumeFlowMultiplier();
     _scalePowerMode = await _settingsService.scalePowerMode();
+    _bridgeHost = await _settingsService.bridgeHost();
+    _bridgeHttpPort = await _settingsService.bridgeHttpPort();
+    _bridgeWsPort = await _settingsService.bridgeWsPort();
 
     // Important! Inform listeners a change has occurred.
     notifyListeners();
@@ -143,6 +153,27 @@ class SettingsController with ChangeNotifier {
     }
     _scalePowerMode = mode;
     await _settingsService.setScalePowerMode(mode);
+    notifyListeners();
+  }
+
+  Future<void> setBridgeHost(String host) async {
+    if (host == _bridgeHost) return;
+    _bridgeHost = host;
+    await _settingsService.setBridgeHost(host);
+    notifyListeners();
+  }
+
+  Future<void> setBridgeHttpPort(int port) async {
+    if (port == _bridgeHttpPort) return;
+    _bridgeHttpPort = port;
+    await _settingsService.setBridgeHttpPort(port);
+    notifyListeners();
+  }
+
+  Future<void> setBridgeWsPort(int port) async {
+    if (port == _bridgeWsPort) return;
+    _bridgeWsPort = port;
+    await _settingsService.setBridgeWsPort(port);
     notifyListeners();
   }
 }

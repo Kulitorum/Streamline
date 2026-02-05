@@ -87,6 +87,31 @@ class SettingsService {
   Future<void> setScalePowerMode(ScalePowerMode mode) async {
     await prefs.setString(SettingsKeys.scalePowerMode.name, mode.name);
   }
+
+  /// DecentBridge host override (empty = auto-discover via mDNS).
+  Future<String> bridgeHost() async {
+    return await prefs.getString(SettingsKeys.bridgeHost.name) ?? '';
+  }
+
+  Future<void> setBridgeHost(String host) async {
+    await prefs.setString(SettingsKeys.bridgeHost.name, host);
+  }
+
+  Future<int> bridgeHttpPort() async {
+    return await prefs.getInt(SettingsKeys.bridgeHttpPort.name) ?? 8080;
+  }
+
+  Future<void> setBridgeHttpPort(int port) async {
+    await prefs.setInt(SettingsKeys.bridgeHttpPort.name, port);
+  }
+
+  Future<int> bridgeWsPort() async {
+    return await prefs.getInt(SettingsKeys.bridgeWsPort.name) ?? 8081;
+  }
+
+  Future<void> setBridgeWsPort(int port) async {
+    await prefs.setInt(SettingsKeys.bridgeWsPort.name, port);
+  }
 }
 
 enum SettingsKeys {
@@ -98,4 +123,7 @@ enum SettingsKeys {
   weightFlowMultiplier,
   volumeFlowMultiplier,
   scalePowerMode,
+  bridgeHost,
+  bridgeHttpPort,
+  bridgeWsPort,
 }

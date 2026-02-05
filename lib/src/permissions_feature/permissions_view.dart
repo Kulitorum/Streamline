@@ -9,7 +9,6 @@ import 'package:reaprime/src/home_feature/home_feature.dart';
 import 'package:reaprime/src/home_feature/widgets/device_selection_widget.dart';
 import 'package:reaprime/src/landing_feature/landing_feature.dart';
 import 'package:reaprime/src/webui_support/webui_storage.dart';
-import 'package:universal_ble/universal_ble.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:reaprime/src/controllers/de1_controller.dart';
 import 'package:reaprime/src/controllers/device_controller.dart';
@@ -106,13 +105,7 @@ class PermissionsView extends StatelessWidget {
 
   Future<bool> checkPermissions() async {
     if (Platform.isAndroid || Platform.isIOS) {
-      // await Permission.ignoreBatteryOptimizations.request();
       await Permission.manageExternalStorage.request();
-      await Permission.bluetoothScan.request();
-      await Permission.bluetoothConnect.request();
-      await Permission.bluetooth.request();
-      await Permission.locationWhenInUse.request();
-      await Permission.locationAlways.request();
 
       // Request notification permission for Android 13+ (API 33+)
       // This allows foreground service notification to appear in notification drawer
@@ -127,10 +120,6 @@ class PermissionsView extends StatelessWidget {
           await Permission.ignoreBatteryOptimizations.request();
         }
       }
-    } else {
-      await UniversalBle.availabilityStream.firstWhere(
-        (e) => e == AvailabilityState.poweredOn,
-      );
     }
     await deviceController.initialize();
 

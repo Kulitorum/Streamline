@@ -4,12 +4,11 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   battery_plus
+  bonsoir_windows
   firebase_core
   flutter_js
-  flutter_libserialport
   permission_handler_windows
   screen_retriever_windows
-  universal_ble
   url_launcher_windows
   window_manager
 )

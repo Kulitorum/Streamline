@@ -32,6 +32,16 @@ class MachineInfo {
       'extra': extra,
     };
   }
+
+  factory MachineInfo.fromJson(Map<String, dynamic> json) {
+    return MachineInfo(
+      version: json['version'] as String? ?? '',
+      model: json['model'] as String? ?? '',
+      serialNumber: json['serialNumber'] as String? ?? '',
+      groupHeadControllerPresent: json['GHC'] as bool? ?? false,
+      extra: (json['extra'] as Map<String, dynamic>?) ?? {},
+    );
+  }
 }
 
 class MachineSnapshot {
@@ -123,16 +133,16 @@ class MachineSnapshot {
           (e) => e.name == json["state"]["substate"],
         ),
       ),
-      flow: json["flow"],
-      pressure: json["pressure"],
-      targetFlow: json["targetFlow"],
-      targetPressure: json["targetPressure"],
-      mixTemperature: json["mixTemperature"],
-      groupTemperature: json["groupTemperature"],
-      targetMixTemperature: json["targetMixTemperature"],
-      targetGroupTemperature: json["targetGroupTemperature"],
-      profileFrame: json["profileFrame"],
-      steamTemperature: json["steamTemperature"],
+      flow: (json["flow"] as num?)?.toDouble() ?? 0.0,
+      pressure: (json["pressure"] as num?)?.toDouble() ?? 0.0,
+      targetFlow: (json["targetFlow"] as num?)?.toDouble() ?? 0.0,
+      targetPressure: (json["targetPressure"] as num?)?.toDouble() ?? 0.0,
+      mixTemperature: (json["mixTemperature"] as num?)?.toDouble() ?? 0.0,
+      groupTemperature: (json["groupTemperature"] as num?)?.toDouble() ?? 0.0,
+      targetMixTemperature: (json["targetMixTemperature"] as num?)?.toDouble() ?? 0.0,
+      targetGroupTemperature: (json["targetGroupTemperature"] as num?)?.toDouble() ?? 0.0,
+      profileFrame: (json["profileFrame"] as num?)?.toInt() ?? 0,
+      steamTemperature: (json["steamTemperature"] as num?)?.toInt() ?? 0,
     );
   }
 }

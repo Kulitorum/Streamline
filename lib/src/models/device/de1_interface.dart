@@ -173,5 +173,12 @@ final class De1WaterLevels {
       'refillLevel': refillLevel,
     };
   }
+
+  factory De1WaterLevels.fromJson(Map<String, dynamic> json) {
+    return De1WaterLevels(
+      currentLevel: (json['currentLevel'] as num?)?.toInt() ?? 0,
+      refillLevel: (json['refillLevel'] as num?)?.toInt() ?? 0,
+    );
+  }
 }
 

@@ -10,6 +10,7 @@ import 'package:reaprime/src/home_feature/forms/water_levels_form.dart';
 import 'package:reaprime/src/models/data/workflow.dart';
 import 'package:reaprime/src/models/device/de1_interface.dart';
 import 'package:reaprime/src/models/device/device.dart' as device;
+import 'package:reaprime/src/models/device/machine.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -340,6 +341,49 @@ class _StatusTileState extends State<StatusTile> {
       spacing: 5,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        // Start/Stop button based on current state
+        StreamBuilder(
+          stream: widget.de1.currentSnapshot,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return SizedBox(width: 100);
+            }
+            final state = snapshot.data!.state.state;
+            final isIdle = state == MachineState.idle;
+            final isEspresso = state == MachineState.espresso;
+
+            if (isIdle) {
+              return ShadButton(
+                onPressed: () {
+                  widget.de1.requestState(MachineState.espresso);
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 8,
+                  children: [
+                    Icon(LucideIcons.coffee, size: 18),
+                    Text("Start"),
+                  ],
+                ),
+              );
+            } else if (isEspresso) {
+              return ShadButton.destructive(
+                onPressed: () {
+                  widget.de1.requestState(MachineState.idle);
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  spacing: 8,
+                  children: [
+                    Icon(LucideIcons.circleStop, size: 18),
+                    Text("Stop"),
+                  ],
+                ),
+              );
+            }
+            return SizedBox(width: 100);
+          },
+        ),
         Text(
           "Machine:",
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

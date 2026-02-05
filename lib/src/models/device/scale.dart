@@ -35,5 +35,13 @@ class ScaleSnapshot {
       'batteryLevel': batteryLevel,
     };
   }
+
+  factory ScaleSnapshot.fromJson(Map<String, dynamic> json) {
+    return ScaleSnapshot(
+      timestamp: DateTime.parse(json['timestamp']),
+      weight: (json['weight'] as num).toDouble(),
+      batteryLevel: (json['batteryLevel'] as num?)?.toInt() ?? 0,
+    );
+  }
 }
 

@@ -29,6 +29,10 @@ class PluginManager {
   StreamSubscription<De1Interface?>? _de1Subscription;
   StreamSubscription<MachineSnapshot>? _snapshotSubscription;
 
+  /// Base URL of the DecentBridge HTTP API (e.g. "http://192.168.1.50:8080").
+  /// When set, plugin fetch() calls targeting localhost:8080 are redirected here.
+  String? bridgeHttpBaseUrl;
+
   De1Controller? get de1Controller => _de1controller;
 
   PluginManager({required this.kvStore})
@@ -565,10 +569,17 @@ class PluginManager {
 
   Future<void> _handleFetch(Map<String, dynamic> msg) async {
     final int id = msg['id'];
-    final String url = msg['url'];
+    String url = msg['url'];
     final String method = (msg['method'] ?? 'GET').toUpperCase();
     final Map headers = msg['headers'] ?? {};
     final dynamic body = msg['body'];
+
+    // Redirect localhost:8080 requests to DecentBridge when available
+    if (bridgeHttpBaseUrl != null && bridgeHttpBaseUrl!.isNotEmpty) {
+      url = url
+          .replaceFirst('http://localhost:8080', bridgeHttpBaseUrl!)
+          .replaceFirst('http://127.0.0.1:8080', bridgeHttpBaseUrl!);
+    }
 
     try {
       final client = HttpClient();
