@@ -1,4 +1,4 @@
-# REA Profiles API
+# Streamline Profiles
 
 ## Preamble
 
@@ -7,20 +7,20 @@ or flow-based steps.
 The first public specification of the JSON version of these profiles I know about,
 has been defined by [Jeff Kletsky](https://pyde1.readthedocs.io/en/latest/profile_json.html)
 \- it's actually a version 2.1 of the specification it seems.
-REA supports loading these profiles to the espresso machine
+Streamline supports loading these profiles to the espresso machine
 either directly through the '/machine/profile'
 endpoint or by updating the '/workflow' endpoint, which is more suited
 for updating the entire system.
 
-The REA Profile data object definition lives in
+The Streamline Profile data object definition lives in
 [lib/models/data/profile.dart](./lib/src/models/data/profile.dart).
 
 ## Requirements
 
-As users begin to use REA, either in standalone or 'gateway'
+As users begin to use Streamline, either in standalone or 'gateway'
 mode, a need for managing the profiles arises naturally.
 A central storage system is best suited for this type
-of storage, since users might use REA in combination
+of storage, since users might use Streamline in combination
 with different clients. Ensuring a
 consistent experience when browsing their profiles library
 is crucial.
@@ -40,8 +40,8 @@ need for at least the following functionalities:
 ### API and Storage
 
 A collection of curated original and most popular public profiles
-will be bundled with REA in the flutter `assets/defaultProfiles`
-folder. On startup REA should check whether these profiles are
+will be bundled with Streamline in the flutter `assets/defaultProfiles`
+folder. On startup Streamline should check whether these profiles are
 already present in the profile storage and if not, insert them
 
 #### Storage data type model
@@ -106,7 +106,7 @@ The Profiles API has been fully implemented following the requirements above. Th
 
 ### Architecture
 
-The implementation follows REA's standard layered architecture with clear separation of concerns:
+The implementation follows Streamline's standard layered architecture with clear separation of concerns:
 
 ```
 ┌─────────────────────────────────────┐
@@ -166,7 +166,7 @@ The implementation follows REA's standard layered architecture with clear separa
 
 ### Content-Based Hash IDs
 
-REA uses **content-based hashing** for profile identification instead of random UUIDs or custom IDs. This provides:
+Streamline uses **content-based hashing** for profile identification instead of random UUIDs or custom IDs. This provides:
 - **Automatic deduplication**: Identical profiles have identical IDs across all installations
 - **Cloud sync support**: Same profile content = same ID everywhere
 - **Conflict-free merging**: No manual conflict resolution needed
@@ -224,7 +224,7 @@ record1.metadataHash != record2.metadataHash  // true
 record1.compoundHash != record2.compoundHash  // true
 ```
 
-This enables REA to:
+This enables Streamline to:
 - Identify functionally identical profiles regardless of name/author
 - Detect cosmetic changes without creating duplicate entries
 - Merge profile libraries from multiple sources automatically
@@ -244,7 +244,7 @@ Manifest structure:
 ```json
 {
   "version": "1.0.0",
-  "description": "Default espresso profiles bundled with REA Prime",
+  "description": "Default espresso profiles bundled with Streamline Prime",
   "profiles": [
     "best_practice.json",
     "cremina.json",
@@ -417,7 +417,7 @@ Response: Restored `ProfileRecord` (200) or error (404)
 
 **Create a new profile:**
 ```bash
-curl -X POST http://localhost:8080/api/v1/profiles \
+curl -X POST http://<bridge-ip>:8080/api/v1/profiles \
   -H "Content-Type: application/json" \
   -d '{
     "profile": {
@@ -433,7 +433,7 @@ curl -X POST http://localhost:8080/api/v1/profiles \
 
 **Create a modified version (child profile):**
 ```bash
-curl -X POST http://localhost:8080/api/v1/profiles \
+curl -X POST http://<bridge-ip>:8080/api/v1/profiles \
   -H "Content-Type: application/json" \
   -d '{
     "profile": {...},
@@ -443,24 +443,24 @@ curl -X POST http://localhost:8080/api/v1/profiles \
 
 **Hide a default profile:**
 ```bash
-curl -X DELETE http://localhost:8080/api/v1/profiles/{id}
+curl -X DELETE http://<bridge-ip>:8080/api/v1/profiles/{id}
 ```
 
 **Restore a hidden default profile:**
 ```bash
-curl -X PUT http://localhost:8080/api/v1/profiles/{id}/visibility \
+curl -X PUT http://<bridge-ip>:8080/api/v1/profiles/{id}/visibility \
   -H "Content-Type: application/json" \
   -d '{"visibility": "visible"}'
 ```
 
 **Export all profiles for backup:**
 ```bash
-curl http://localhost:8080/api/v1/profiles/export > profiles_backup.json
+curl http://<bridge-ip>:8080/api/v1/profiles/export > profiles_backup.json
 ```
 
 **Import profiles from backup:**
 ```bash
-curl -X POST http://localhost:8080/api/v1/profiles/import \
+curl -X POST http://<bridge-ip>:8080/api/v1/profiles/import \
   -H "Content-Type: application/json" \
   -d @profiles_backup.json
 ```
@@ -514,7 +514,7 @@ All 21 tests pass successfully.
 ### Storage Details
 
 **Why Hive?**
-- Already integrated in REA
+- Already integrated in Streamline
 - Native Dart/Flutter support
 - Excellent for document-oriented JSON storage
 - Fast key-value operations
@@ -537,7 +537,7 @@ To use a profile with the DE1 machine, either:
 
 1. **Direct upload to machine:**
 ```bash
-curl -X POST http://localhost:8080/api/v1/machine/profile \
+curl -X POST http://<bridge-ip>:8080/api/v1/machine/profile \
   -H "Content-Type: application/json" \
   -d '{...profile...}'
 ```
@@ -545,10 +545,10 @@ curl -X POST http://localhost:8080/api/v1/machine/profile \
 2. **Via Workflow API (recommended):**
 ```bash
 # Get the profile
-PROFILE=$(curl http://localhost:8080/api/v1/profiles/{id})
+PROFILE=$(curl http://<bridge-ip>:8080/api/v1/profiles/{id})
 
 # Update workflow with the profile
-curl -X PUT http://localhost:8080/api/v1/workflow \
+curl -X PUT http://<bridge-ip>:8080/api/v1/workflow \
   -H "Content-Type: application/json" \
   -d "{\"profile\": $(echo $PROFILE | jq '.profile')}"
 ```

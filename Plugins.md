@@ -1,15 +1,15 @@
 
-# Rea Plugin Development Guide
+# Streamline Plugin Development Guide
 
 ## Overview
 
-Rea plugins are JavaScript modules that extend the functionality of REA.
+Streamline plugins are JavaScript modules that extend the functionality of Streamline.
 Plugins run in a sandboxed JavaScript environment and can react to machine events,
-store data, make HTTP requests, and emit events through REA api.
+store data, make HTTP requests, and emit events through the Streamline API.
 
 ## Plugin Structure
 
-A Rea plugin consists of two required files:
+A Streamline plugin consists of two required files:
 
 ### 1. `manifest.json` - Plugin metadata and configuration
 
@@ -175,17 +175,17 @@ host.emit("timeToReady", {
 ```
 
 The event name is tied to the api endpoint, defined in the plugin manifest.
-When Rea matches an external request to an endpoint that is defined in the
+When Streamline matches an external request to an endpoint that is defined in the
 plugins manifest,
 it will send over events emitted by the plugin.
 
 Example:
 
 ```bash
-npx wscat -c ws://localhost:8080/ws/v1/plugins/time-to-ready.reaplugin/timeToReady
+npx wscat -c ws://<bridge-ip>:8081/ws/v1/plugins/time-to-ready.reaplugin/timeToReady
 
 ```
-Will open a websocket through wich Rea will forward all the `timeToReady` events
+Will open a websocket through which Streamline will forward all the `timeToReady` events
 
 ## HTTP Requests
 
@@ -344,9 +344,9 @@ When receiving `stateUpdate` events, the payload contains:
 - Use `host.log()` extensively during development
 - Check Flutter app logs for JavaScript errors
 - Test with simple plugins first, then add complexity
-- When iterating, it helps to debug on a platform that can access Rea
+- When iterating, it helps to debug on a platform that can access Streamline
 documents. This way, you can edit plugin source directly and simply reload
-it in Rea UI.
+it in Streamline UI.
 
 ## API Reference
 
@@ -369,7 +369,7 @@ it in Rea UI.
 - HTTP requests are proxied through Flutter (respects system proxy settings)
 - Storage is isolated per plugin
 - No filesystem access beyond the plugin's own directory
-- No network access to localhost/private IPs (except for REA API)
+- Plugin `fetch()` calls to `localhost:8080` are automatically redirected to the DecentBridge URL
 
 ## Next Steps
 

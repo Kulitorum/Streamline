@@ -1,10 +1,10 @@
 # Release Guide
 
-This document describes how to create releases for ReaPrime.
+This document describes how to create releases for Streamline.
 
 ## Creating a Release
 
-ReaPrime uses git tags to trigger automatic releases. When you push a tag, GitHub Actions will:
+Streamline uses git tags to trigger automatic releases. When you push a tag, GitHub Actions will:
 1. Build the Android APK
 2. Create a GitHub release
 3. Attach the APK to the release
@@ -28,19 +28,19 @@ git push origin v1.0.0-alpha.1
 
 ### Step 2: Monitor the Build
 
-1. Go to https://github.com/tadelv/reaprime/actions
+1. Go to https://github.com/Kulitorum/Streamline/actions
 2. Watch the "Create Release" workflow
 3. Wait for it to complete (usually 5-10 minutes)
 
 ### Step 3: Verify the Release
 
-1. Go to https://github.com/tadelv/reaprime/releases
+1. Go to https://github.com/Kulitorum/Streamline/releases
 2. Your new release should appear with the APK attached
 3. Download and test the APK
 
 ## Version Numbering
 
-ReaPrime follows [Semantic Versioning](https://semver.org/):
+Streamline follows [Semantic Versioning](https://semver.org/):
 
 - **MAJOR.MINOR.PATCH** (e.g., `v1.2.3`)
   - **MAJOR**: Breaking changes or major new features

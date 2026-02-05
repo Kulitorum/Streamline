@@ -1,60 +1,93 @@
-# Reasonable Espresso App - 1 a.k.a. Streamline Bridge
+# Streamline
 
-> ReaPrime (R1) is a gateway app to the next generation of interfaces for Decent espresso machines. An API first approach makes it help you
-> focus on developing modern and sleek UIs, that are easy on the eyes as well as a delight to use. 
+> Streamline is a multi-platform Flutter client for Decent Espresso machines. It connects to [DecentBridge](https://github.com/Kulitorum/DecentBridge) — a C++/Qt server that handles BLE communication with DE1 machines and scales — and provides a modern UI for controlling your machine, managing profiles, and tracking shots.
 
+## Architecture
 
-## API
-To browse the REA API, start REA and then point your browser to [localhost:4001](http://localhost:4001).
+```
+Device <-BLE-> DecentBridge (server) <-HTTP/WS-> Streamline (client)
+```
 
-## Supported platforms
-The primary platform for ReaPrime is Android, as it runs on the tablet Decent espresso machines ship with.
-Of course, R1 can run as a service in the background, neatly tucked out of the way, but still keeping a stable
-connection between your app and the machine.
+Streamline is a **client-only** app. All device communication goes through DecentBridge's REST API and WebSocket API. Streamline auto-discovers DecentBridge on the local network via mDNS/Zeroconf.
 
-### What does it support?
-Currently, R1 supports the most basic of features, but enough to support the main workflows
+## Supported Platforms
 
-#### Machine supported operations
-- Query and set machine state (turn off/on, start espresso on machines without GHC, stop the shot)
-- Set machine settings such as hot water temperature, steam temperature etc.
-- Upload v2 json profiles to the machine (the ones de1app stores in `profiles_v2`)
+- **Android** (primary — ships on Decent tablets)
+- **macOS**
+- **Linux** (x86_64 + ARM64/Raspberry Pi)
+- **Windows**
 
-- Exposed websockets for realtime shot updates and other values that might change frequently
+## Features
 
-#### Scale supported operations
-- Tare the scale
-- Exposed websocket for weight snapshots
+### Machine Control
+- Query and set machine state (on/off, espresso, steam, hot water, flush)
+- Configure machine settings (temperatures, flow rates, fan threshold, USB charger mode)
+- Upload v2 JSON profiles to the machine
+- Real-time shot data streaming (pressure, flow, temperature)
 
-##### Currently supported scales:
-- Felicita Arc
-- Decent Scale
-- Bookoo
+### Scale Support
+- Real-time weight streaming
+- Tare control
+- Automatic connection via DecentBridge
+
+### Profiles
+- Built-in library of curated default profiles
+- Import/export profile collections
+- Content-based deduplication (identical profiles share the same ID)
+- Profile versioning with parent-child lineage tracking
 
 ### Plugins
+Streamline features a JavaScript plugin system for extending functionality. [Read more](Plugins.md).
 
-REA features a plugin system, for dynamic expansion of the user experience.
-
-[Read here](/Plugins.md) for more information.
+### WebUI
+Streamline can serve a web-based UI skin (e.g., the Streamline Project skin) on `localhost:3000`, viewable in any browser on the same device.
 
 ## Building
 
-I'll skip through Flutter SDK install for now, google has all the answers.  
+### Prerequisites
+- Flutter SDK (Dart ^3.7.0)
+- Platform-specific toolchains (Android SDK, Xcode, Visual Studio, etc.)
 
-### Build on your machine
+### Build & Run
 
-For versioning purposes, a build script is included, that injects certain environment vars into the build process.  
-If you want to take advantage of that, make sure you run:
-`./flutter_with_commit.sh run`
+Use the build wrapper script to inject git metadata:
 
-### Build for Linux arm64 in container:
+```bash
+./flutter_with_commit.sh run                           # Run the app
+./flutter_with_commit.sh run --dart-define simulate=1  # Run with simulated devices
+./flutter_with_commit.sh build apk --release           # Android APK
+./flutter_with_commit.sh build macos --release         # macOS
+./flutter_with_commit.sh build linux --release         # Linux
+./flutter_with_commit.sh build windows --release       # Windows
+```
 
-Have Colima installed. Then `make build-arm`
+Or use Flutter directly (without build info injection):
 
+```bash
+flutter pub get          # Install dependencies
+flutter test             # Run all tests
+flutter analyze          # Static analysis
+flutter run -d windows   # Run on Windows
+```
 
-## Reasons and credits:
+On Windows, you can also use `run.bat` for quick launching.
 
-REA stands for "Reasonable Espresso App". Provided you use it with a Decent Espresso machine, it might help you brew a reasonably decent espresso.  
+### Docker-based Linux ARM64 builds
 
-Credit for the name and thanks for all the support, goes to [@randomcoffeesnob](https://github.com/randomcoffeesnob).  
-Also thanks to [@mimoja](https://github.com/mimoja) for the first Flutter app version.
+Requires Colima: `make build-arm`
+
+## Configuration
+
+### Bridge Connection
+
+Streamline auto-discovers DecentBridge via mDNS. If auto-discovery doesn't work, you can manually configure in Settings:
+
+- **Bridge Host**: IP address of the DecentBridge server
+- **Bridge HTTP Port**: REST API port (default: 8080)
+- **Bridge WS Port**: WebSocket port (default: 8081)
+
+## Credits
+
+Streamline is built on top of [ReaPrime](https://github.com/tadelv/reaprime) by [@tadelv](https://github.com/tadelv).
+
+REA stands for "Reasonable Espresso App". Credit for the name goes to [@randomcoffeesnob](https://github.com/randomcoffeesnob). Thanks to [@mimoja](https://github.com/mimoja) for the first Flutter app version.
